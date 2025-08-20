@@ -1,0 +1,136 @@
+# Java HashMap, HashSet, Hashtable 정리
+
+## 1. HashMap
+
+- **키-값(Key-Value) 쌍**을 저장하는 자료구조
+- **중복 키 저장 불가**, 값은 중복 가능
+- **저장 순서 없음**  
+- **null 키와 null 값 허용** (키는 하나만, 값은 여러 번)
+- **비동기(스레드 안전하지 않음)**  
+- **가장 많이 사용되는 해시 기반 Map**
+
+### 주요 메서드
+| 메서드                | 설명                       |
+|-----------------------|----------------------------|
+| put(K key, V value)   | 키-값 쌍 추가/수정         |
+| get(Object key)       | 키로 값 조회               |
+| remove(Object key)    | 키로 값 삭제               |
+| containsKey(Object k) | 키 포함 여부 확인          |
+| containsValue(Object v)| 값 포함 여부 확인         |
+| size()                | 맵의 크기 반환             |
+| clear()               | 모든 값 삭제               |
+
+### 사용 예시
+```java
+HashMap<String, Integer> map = new HashMap<>();
+map.put("apple", 10);
+map.put("banana", 20);
+System.out.println(map.get("apple")); // 10
+map.remove("banana");
+System.out.println(map.containsKey("apple")); // true
+```
+
+---
+
+## 2. HashSet
+
+- **집합(Set) 자료구조**를 구현한 클래스
+- **중복 불허**: 같은 값을 여러 번 넣어도 하나만 저장
+- **저장 순서 없음**
+- **내부적으로 HashMap 이용**  
+  (값을 키로 저장하고, 값은 항상 동일한 더미 객체)
+- **null 값 저장 가능** (한 번만)
+- **비동기(스레드 안전하지 않음)**
+
+### 주요 메서드
+| 메서드           | 설명                      |
+|------------------|---------------------------|
+| add(E e)         | 값 추가                   |
+| remove(Object o) | 값 삭제                   |
+| contains(Object o)| 값 포함 여부 확인        |
+| size()           | 집합의 크기 반환          |
+| clear()          | 모든 값 삭제              |
+
+### 사용 예시
+```java
+HashSet<Integer> set = new HashSet<>();
+set.add(10);
+set.add(20);
+set.add(10); // 중복 무시
+System.out.println(set.contains(20)); // true
+set.remove(10);
+System.out.println(set);              // [20]
+```
+
+---
+
+## 3. Hashtable
+
+- **키-값(Key-Value) 쌍**을 저장하는 자료구조
+- **중복 키 저장 불가**, 값은 중복 가능
+- **저장 순서 없음**
+- **null 키와 null 값 저장 불가**
+- **동기화(스레드 안전함)**  
+  - 여러 스레드에서 동시에 사용해도 안전
+- **구식 클래스**  
+  - 최근에는 `HashMap`을 더 많이 사용
+
+### 주요 메서드
+| 메서드                | 설명                       |
+|-----------------------|----------------------------|
+| put(K key, V value)   | 키-값 쌍 추가/수정         |
+| get(Object key)       | 키로 값 조회               |
+| remove(Object key)    | 키로 값 삭제               |
+| containsKey(Object k) | 키 포함 여부 확인          |
+| containsValue(Object v)| 값 포함 여부 확인         |
+| size()                | 맵의 크기 반환             |
+| clear()               | 모든 값 삭제               |
+
+### 사용 예시
+```java
+Hashtable<String, Integer> table = new Hashtable<>();
+table.put("apple", 100);
+table.put("banana", 200);
+// table.put(null, 300);    // 오류 발생! (null 키 불가)
+// table.put("orange", null); // 오류 발생! (null 값 불가)
+System.out.println(table.get("apple")); // 100
+System.out.println(table.containsKey("banana")); // true
+```
+
+---
+
+## 차이점 요약
+
+| 항목           | HashMap           | HashSet           | Hashtable         |
+|----------------|-------------------|-------------------|-------------------|
+| 구조           | 키-값 쌍 저장     | 값만 저장         | 키-값 쌍 저장     |
+| 중복           | 키 중복 불가      | 값 중복 불가      | 키 중복 불가      |
+| 순서           | 없음              | 없음              | 없음              |
+| null 허용      | 키/값 허용        | 값 허용           | 허용하지 않음     |
+| 동기화         | 비동기            | 비동기            | 동기화 지원       |
+| 내부           | 자체 구현         | HashMap 이용      | 자체 구현         |
+| 용도           | 일반 Map          | 집합/유일값 저장  | 동기화 필요한 Map |
+| 최신성         | 최신(추천)        | 최신(추천)        | 구식(비추천)      |
+
+---
+
+## 언제 사용하나?
+
+- **HashMap**  
+  - 일반적인 키-값 데이터 저장
+  - 대부분의 경우 추천
+
+- **HashSet**  
+  - 중복 없는 값의 집합 필요할 때
+  - 빠른 포함 여부 확인
+
+- **Hashtable**  
+  - 멀티스레드 환경에서 Map이 꼭 필요할 때
+  - (하지만 최신 자바에서는 `ConcurrentHashMap` 사용을 추천함)
+
+---
+
+## 참고
+- `HashSet`은 내부적으로 `HashMap`을 활용합니다.
+- `Hashtable`은 스레드 안전하지만 성능이 떨어질 수 있습니다.
+- 대부분의 경우 `HashMap`과 `HashSet`을 사용하는 것이 좋습니다.
