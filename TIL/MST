@@ -1,0 +1,103 @@
+# MST 알고리즘 선택 가이드 (Prim & Kruskal)
+
+## 최소 신장 트리(MST, Minimum Spanning Tree)란?
+- 주어진 **그래프**에서 모든 노드를 연결하는 **사이클 없는 부분 그래프** 중  
+  **간선 가중치 합이 최소**인 트리 구조를 찾는 것
+- 대표 알고리즘: **프림(Prim)**, **크루스칼(Kruskal)**
+
+---
+
+## Prim vs. Kruskal: 언제 어떤 알고리즘을 써야 할까?
+
+### 1. 프림(Prim) 알고리즘
+- **노드 중심** 확장 방식: 현재 연결된 노드에서 인접한 최소 가중치의 간선을 선택해서 그래프를 확장
+- 구현: **인접 리스트** 또는 **인접 행렬** + **우선순위큐**
+- **적합한 상황:**  
+  - **간선 개수가 노드 개수에 비해 많을 때** (ex. 완전그래프, 밀집 그래프)  
+  - 인접한 간선 정보를 빠르게 조회할 수 있을 때  
+- **시간복잡도:**  
+  - 인접리스트 + 우선순위큐: O(E log V)
+  - 인접행렬: O(V²)
+- **특징:**  
+  - 한 번에 한 노드씩 MST에 포함시키는 방식  
+  - 간선이 많아도 인접 노드만 탐색하므로 효율적
+
+### 2. 크루스칼(Kruskal) 알고리즘
+- **간선 중심** 선택 방식: 모든 간선을 가중치 오름차순으로 정렬한 뒤,  
+  사이클이 생기지 않도록 하나씩 선택하여 MST 구성
+- 구현: **간선 리스트** + **우선순위큐** + **Union-Find**
+- **적합한 상황:**  
+  - **간선 개수가 노드 개수에 비해 적을 때** (ex. 희소 그래프)
+  - 전체 간선을 쉽게 정렬할 수 있을 때  
+- **시간복잡도:**  
+  - O(E log E) (E: 간선 개수)
+- **특징:**  
+  - 가장 짧은 간선부터 MST에 포함시키는 방식  
+  - Union-Find로 사이클 방지  
+  - 간선이 적을수록 효율적
+
+---
+
+## 선택 기준 요약
+
+| 그래프 유형           | 추천 알고리즘 |
+|----------------------|---------------|
+| **완전그래프/밀집**  | Prim          |
+| **희소 그래프**      | Kruskal       |
+
+- **간선이 많으면 → Prim**
+- **간선이 적으면 → Kruskal**
+
+---
+
+## 예시 코드 (간단 비교)
+
+### Prim (우선순위큐 사용)
+```java
+PriorityQueue<Edge> pq = new PriorityQueue<>();
+boolean[] visited = new boolean[N + 1];
+int totalWeight = 0;
+
+pq.offer(new Edge(시작노드, 0));
+while (!pq.isEmpty()) {
+    Edge now = pq.poll();
+    if (visited[now.to]) continue;
+    visited[now.to] = true;
+    totalWeight += now.weight;
+    for (Edge next : 인접리스트[now.to]) {
+        if (!visited[next.to]) pq.offer(next);
+    }
+}
+```
+
+### Kruskal
+```java
+List<Edge> edges = ...; // 간선 리스트
+Collections.sort(edges); // 오름차순 정렬
+int[] parent = new int[N + 1];
+for (int i = 1; i <= N; i++) parent[i] = i;
+
+int totalWeight = 0, cnt = 0;
+for (Edge e : edges) {
+    if (find(e.from) != find(e.to)) {
+        union(e.from, e.to);
+        totalWeight += e.weight;
+        cnt++;
+        if (cnt == N - 1) break; // MST 완성
+    }
+}
+```
+
+---
+
+## 참고
+- 실제 구현에서는 그래프의 크기, 간선의 개수, 입력 형태 등을 고려하여 선택
+- 시간 복잡도와 메모리 효율 모두 고려
+- 알고리즘 선택 외에도, 입력이 인접행렬인지 간선리스트인지도 중요함
+
+---
+
+## 참고 자료
+- [백준 1197 최소 스패닝 트리](https://www.acmicpc.net/problem/1197)
+- [백준 1922 네트워크 연결](https://www.acmicpc.net/problem/1922)
+- [위키백과 MST](https://ko.wikipedia.org/wiki/%EC%B5%9C%EC%86%8C_%EC%8B%A0%EC%9E%A5_%ED%8A%B8%EB%A6%AC)
