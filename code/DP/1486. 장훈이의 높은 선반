@@ -1,0 +1,45 @@
+import java.util.*;
+import java.io.*;
+
+class Solution
+{
+	 static int T, N, B;
+    static int[] arr;
+
+    public static void main(String[] args) throws Exception {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st;
+        T = Integer.parseInt(br.readLine());
+
+        for (int tc = 1; tc <= T; tc++) {
+            st = new StringTokenizer(br.readLine());
+            N = Integer.parseInt(st.nextToken());
+            B = Integer.parseInt(st.nextToken());
+            arr = new int[N];
+
+            st = new StringTokenizer(br.readLine());
+            for (int i = 0; i < N; i++) {
+                arr[i] = Integer.parseInt(st.nextToken());
+            }
+
+            int maxSum = Arrays.stream(arr).sum();
+            boolean[] dp = new boolean[maxSum + 1];
+            dp[0] = true;
+
+            for (int i = 0; i < N; i++) {
+                for (int j = maxSum; j >= arr[i]; j--) {
+                    if (dp[j - arr[i]]) dp[j] = true;
+                }
+            }
+
+            int answer = Integer.MAX_VALUE;
+            for (int i = B; i <= maxSum; i++) {
+                if (dp[i]) {
+                    answer = i - B;
+                    break;
+                }
+            }
+             System.out.println("#" + tc + " " + answer);
+        }
+    }
+}
